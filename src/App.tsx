@@ -3,10 +3,10 @@ import './App.css';
 import SearchBar from "./component/SearchBar/SearchBar";
 import WeatherContent from "./component/WeatherContent/WeatherContent";
 import {ILocation} from "./types/interfaces";
+import Typography from "@mui/material/Typography";
 
 function App() {
     const [locationList, setLocationList] = useState<ILocation[]>([]);
-
     const onUpdateLocationList = (location: ILocation) => {
         setLocationList([...locationList, location]);
         console.log(locationList);
@@ -28,6 +28,11 @@ function App() {
 
     return (
         <div className="App">
+            <Typography
+                align={"center"}
+                variant={"h1"}>
+                Simple Weather App
+            </Typography>
             <div>
                 <SearchBar onUpdateLocationList={onUpdateLocationList}/>
             </div>
