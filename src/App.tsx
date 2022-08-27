@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
 import SearchBar from "./component/SearchBar/SearchBar";
 import WeatherContent from "./component/WeatherContent/WeatherContent";
@@ -12,6 +12,20 @@ function App() {
         console.log(locationList);
     }
 
+    useEffect(() => {
+        navigator.geolocation.getCurrentPosition((pos) => {
+            const coord = pos.coords;
+
+            setLocationList([...locationList, {
+                latitude: coord.latitude,
+                longitude: coord.longitude
+            }]);
+
+        }, (err) => {
+            console.warn(`ERROR(${err.code}): ${err.message}`);
+        }, {});
+    }, []);
+
     return (
         <div className="App">
             <div>
@@ -19,7 +33,7 @@ function App() {
             </div>
 
             <div>
-                <WeatherContent />
+                <WeatherContent locationList={locationList}/>
             </div>
         </div>
     );
