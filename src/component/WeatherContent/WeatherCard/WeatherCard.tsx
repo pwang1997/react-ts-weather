@@ -2,18 +2,19 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import * as React from "react";
-import {ILocation} from "../../../types/interfaces";
+import {ILocation, IWeather} from "../../../types/interfaces";
 import {useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 
 import {CartesianGrid, LineChart, YAxis, XAxis, Line, Tooltip} from "recharts";
+import {CardMedia} from "@mui/material";
 
 interface IProps {
     location: ILocation;
 }
 
 export default function WeatherCard({location}: IProps) {
-    const [tempList, setTempList] = useState(Array<any>());
+    const [tempList, setTempList] = useState(Array<IWeather>());
     const [city, setCity] = useState();
     useEffect(() => {
         const count = 6;
@@ -24,11 +25,12 @@ export default function WeatherCard({location}: IProps) {
         const resFetchWeather = (res: AxiosResponse) => {
             const data = res.data.list;
 
-            let forecastList = Array<any>();
+            let forecastList = Array<IWeather>();
             for (const forecast of data) {
                 forecastList = [...forecastList, {
                     time: forecast.dt_txt,
-                    temp: forecast.main.temp
+                    temperature: forecast.main.temp,
+                    icon: forecast?.weather[0]?.icon
                 }];
             }
             setTempList([...tempList, ...forecastList]);
@@ -52,9 +54,20 @@ export default function WeatherCard({location}: IProps) {
                 console.log(`ERROR(${err.code}): ${err.message}`)
             });
     }, []);
+
     return (
         <div>
             <Card className="center">
+                <CardMedia
+                    component="img"
+                    height="140"
+                    image={`https://openweathermap.org/img/wn/${tempList[0]?.icon}.png`}
+                    alt="weather image"
+                    sx={{
+                        height: 64,
+                        width: 64
+                    }}
+                />
                 <CardContent>
                     <Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>
                         Latitude: {
@@ -78,11 +91,10 @@ export default function WeatherCard({location}: IProps) {
                         <YAxis/>
                         <Tooltip/>
                         <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
-                        <Line type="monotone" dataKey="temp" stroke="#8884d8" activeDot={{r: tempList.length}}/>
+                        <Line type="monotone" dataKey="temperature" stroke="#8884d8" activeDot={{r: 6}}/>
                     </LineChart>
                 </CardContent>
             </Card>
-
         </div>
     );
 }

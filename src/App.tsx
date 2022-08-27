@@ -9,7 +9,6 @@ function App() {
     const [locationList, setLocationList] = useState<ILocation[]>([]);
     const onUpdateLocationList = (location: ILocation) => {
         setLocationList([...locationList, location]);
-        console.log(locationList);
     }
 
     useEffect(() => {

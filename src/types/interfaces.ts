@@ -3,3 +3,9 @@ export interface ILocation {
     longitude : number,
     alias?: string
 }
+
+export interface IWeather {
+    time : number | string,
+    temperature : number,
+    icon ?: string
+}
