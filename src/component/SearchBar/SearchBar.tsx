@@ -1,4 +1,4 @@
-import React, {FC, useState} from "react";
+import React, {FC, useEffect, useState} from "react";
 import {Button, TextField} from "@mui/material";
 import axios from "axios";
 
@@ -16,13 +16,11 @@ const SearchBar: FC<IProps> = ({onUpdateLocationList} : IProps) => {
     const [debouncedCity, city, setCity] = useDebounce<string>("", 500);
     const [data, setData] = useState<string[]>([]);
 
-    const handleSearch = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-        const newCity = e.target.value;
-        setCity(newCity);
+    useEffect(() => {
         if(!Boolean(debouncedCity)) {
             return;
         }
-        const fetch_city_api = `https://maps.googleapis.com/maps/api/geocode/json?key=${process.env.REACT_APP_GOOGLE_GEOLOCATION_API}&address=${newCity}`;
+        const fetch_city_api = `https://maps.googleapis.com/maps/api/geocode/json?key=${process.env.REACT_APP_GOOGLE_GEOLOCATION_API}&address=${debouncedCity}`;
         axios.get(fetch_city_api)
             .then(res => {
                 if(res.data.length !== 0) {
@@ -39,6 +37,11 @@ const SearchBar: FC<IProps> = ({onUpdateLocationList} : IProps) => {
             .catch(err => {
                 console.warn(`ERROR(${err.code}): ${err.message}`);
             });
+    }, [debouncedCity]);
+
+    const handleSearch = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+        const newCity = e.target.value;
+        setCity(newCity);
     }
 
     const handleSubmit = (event: React.MouseEvent<HTMLElement>) => {
